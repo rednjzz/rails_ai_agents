@@ -25,6 +25,12 @@
             "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty') && [ -n \"$FILE\" ] && [[ \"$FILE\" == *.rb ]] && bundle exec rubocop -a \"$FILE\" > /dev/null 2>&1 || true",
             "timeout": 30,
             "statusMessage": "Auto-formatting with RuboCop..."
+          },
+          {
+            "type": "command",
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty') && [ -n \"$FILE\" ] && [[ \"$FILE\" == *.erb ]] && bundle exec erblint --autocorrect \"$FILE\" > /dev/null 2>&1 || true",
+            "timeout": 30,
+            "statusMessage": "Auto-formatting ERB..."
           }
         ]
       }
@@ -35,7 +41,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "CMD=$(cat | jq -r '.tool_input.command // empty') && if echo \"$CMD\" | grep -qiE '(rm\\s+-rf\\s+[/~]|DROP\\s+TABLE|DROP\\s+DATABASE|git\\s+push\\s+.*--force\\s+.*(main|master|production)|chmod\\s+777)'; then echo 'Blocked: This command is potentially destructive. Please confirm with the user before proceeding.' >&2; exit 2; fi",
+            "command": "CMD=$(cat | jq -r '.tool_input.command // empty') && if echo \"$CMD\" | grep -qiE '(rm\\s+-rf\\s+[/~]|DROP\\s+TABLE|DROP\\s+DATABASE|git\\s+push\\s+.*(-f|--force)\\s+.*(main|master|production)|chmod\\s+777)'; then echo 'Blocked: This command is potentially destructive. Please confirm with the user before proceeding.' >&2; exit 2; fi",
             "timeout": 5,
             "statusMessage": "Checking command safety..."
           }
@@ -47,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "TASK=$(cat | jq -r '.task.description // empty') && if echo \"$TASK\" | grep -qiE '(implement|create|add|build|write)'; then echo '{\"systemMessage\": \"Before marking complete: verify tests pass (bundle exec rspec) and linting is clean (bundle exec rubocop). If you have not run these checks, do so now.\"}'; fi",
+            "command": "TASK=$(cat | jq -r '.task.description // empty') && if echo \"$TASK\" | grep -qiE '(implement|create|add|build|write|fix|refactor|update|migrate|change|move|extract)'; then echo '{\"systemMessage\": \"Before marking complete: verify tests pass (bundle exec rspec) and linting is clean (bundle exec rubocop). If you have not run these checks, do so now.\"}'; fi",
             "timeout": 5,
             "statusMessage": "Checking task completion quality..."
           }

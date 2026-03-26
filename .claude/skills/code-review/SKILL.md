@@ -9,7 +9,8 @@ description: >-
 license: MIT
 compatibility: Ruby 3.3+, Rails 7.0+, RuboCop, Brakeman
 context: fork
-agent: Explore
+agent: general-purpose
+model: sonnet
 user-invocable: true
 argument-hint: "[file or directory path]"
 metadata:

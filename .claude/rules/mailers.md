@@ -1,7 +1,7 @@
 ---
 paths:
   - "app/mailers/**/*.rb"
-  - "app/views/**/_mailer/**"
+  - "app/views/**/*_mailer/**/*.erb"
   - "spec/mailers/**/*.rb"
 ---
 

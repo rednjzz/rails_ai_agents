@@ -8,10 +8,10 @@ paths:
 
 - Single public method: `#call`
 - Class-level shortcut: `self.call(...)` delegates to `new(...).call`
-- Always return a Result object (`Data.define(:success, :data, :error)`)
+- Return a Result object (`Data.define(:success, :data, :error)` with `success?`/`failure?` predicates)
 - Never raise exceptions for business logic failures; use `failure(message)`
 - Namespace by domain: `Entities::CreateService`, `Orders::CancelService`
+- Inherit from `ApplicationService` base class (`app/services/application_service.rb`)
 - Inject dependencies via constructor for testability
 - Wrap multi-model operations in `ActiveRecord::Base.transaction`
 - Test both success and failure paths with `subject(:result)`
-- Base class in `app/services/application_service.rb`

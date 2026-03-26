@@ -11,7 +11,8 @@ description: >-
 license: MIT
 compatibility: Ruby 3.3+, Rails 7.0+, RSpec, Pundit
 context: fork
-agent: Explore
+agent: general-purpose
+model: sonnet
 user-invocable: true
 argument-hint: "[spec file path]"
 metadata:
