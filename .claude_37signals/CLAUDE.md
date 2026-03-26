@@ -83,4 +83,4 @@ bin/rails db:reset                           # Drop, create, load schema + fixtu
 - `belongs_to :creator, default: -> { Current.user }` for context defaults
 - `touch: true` on child associations for cache invalidation
 
-See @../rails-development-principles.md for full development principles.
+See @../docs/rails-development-principles.md for full development principles.

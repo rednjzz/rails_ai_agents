@@ -109,4 +109,4 @@ Before extracting, verify you're not creating:
 
 ## Reference
 
-See @rails-development-principles.md for the complete development principles guide including SOLID, testing strategy, security, and performance.
+See @docs/rails-development-principles.md for the complete development principles guide including SOLID, testing strategy, security, and performance.

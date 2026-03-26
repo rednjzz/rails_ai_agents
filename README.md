@@ -149,13 +149,16 @@ You can also invoke skills directly:
     controllers.md
     ...
 37signals_skills/            # 18 skills, 37signals/Basecamp style
-claude-code-extensibility-guide.md  # Comprehensive extensibility reference
+docs/
+    claude-code-extensibility-guide.md  # Comprehensive extensibility reference
+    mcp-servers-rails-guide.md          # MCP servers for Rails development
+    rails-development-principles.md     # Development principles guide
 glossary.md                  # AI terminology glossary
 ```
 
 ## Extensibility Guide
 
-The [Claude Code Extensibility Guide](claude-code-extensibility-guide.md) covers all extension mechanisms: CLAUDE.md, skills, hooks, subagents, Agent Teams, MCP servers, and plugins. Includes decision trees, configuration references, community patterns, and an adoption playbook.
+The [Claude Code Extensibility Guide](docs/claude-code-extensibility-guide.md) covers all extension mechanisms: CLAUDE.md, skills, hooks, subagents, Agent Teams, MCP servers, and plugins. Includes decision trees, configuration references, community patterns, and an adoption playbook.
 
 ## License
 
