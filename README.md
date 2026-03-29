@@ -1,8 +1,9 @@
 # Rails AI Agents
 
-A production-ready Claude Code setup for Ruby on Rails development: **18 specialized agents**, **20 skills**, **12 path-scoped rules**, and **6 lifecycle hooks**. Drop it into your project and your AI assistant instantly knows Rails conventions, TDD workflows, and production patterns.
+A production-ready Claude Code setup for Ruby on Rails development: **18 specialized agents**, **14 slash commands** (including the [SDD kit](#spec-driven-development-sdd-kit)), **13 skills**, **12 path-scoped rules**, and **6 lifecycle hooks**. Drop it into your project and your AI assistant instantly knows Rails conventions, TDD workflows, and production patterns.
 
 Also includes:
+- [Spec Driven Development (SDD) kit](#spec-driven-development-sdd-kit) — a full specification-to-implementation pipeline.
 - separate [37signals-style collection](#37signals-collection).
 - Claude Code Extensibility Guide
 - AI Terminology Glossary — 289 terms across 25 categories. Also available as a [browsable HTML version](https://thibautbaissac.github.io/ai/glossary.html).
@@ -13,17 +14,6 @@ Also includes:
 ```bash
 # Copy the .claude/ directory into your Rails project
 cp -r .claude/ /path/to/your-rails-app/.claude/
-```
-
-Agents and skills auto-activate based on what you ask. Say "create a service object for order processing" and the `service-agent` takes over. Say "write tests for this model" and `rspec-agent` kicks in.
-
-You can also invoke skills directly:
-
-```
-/feature-spec user registration
-/code-review
-/security-audit
-/tdd-cycle
 ```
 
 ## What's Inside
@@ -53,21 +43,27 @@ You can also invoke skills directly:
 | `tdd-refactoring-agent` | TDD REFACTOR phase (preloads `tdd-cycle` skill) | sonnet |
 | `lint-agent` | RuboCop linting and auto-correction | haiku |
 
+### Commands (`.claude/commands/`)
+
+6 standalone slash commands for feature development workflows. See also [SDD commands](#sdd-commands-claudecommandssdd) below.
+
+| Command | Purpose |
+|---|---|
+| `/feature-spec` | Structured interview to write a complete spec with Gherkin scenarios |
+| `/feature-spec-review` | Scores specs, identifies gaps, generates missing scenarios |
+| `/feature-plan` | Converts spec into TDD implementation plan with PR breakdown |
+| `/feature-tdd-implementation` | Guides full Red-Green-Refactor TDD workflow |
+| `/frame-problem` | Reframes vague requests into clear problems |
+| `/prompt-improver` | Scores and rewrites vague prompts into specific, actionable ones |
+
 ### Skills (`.claude/skills/`)
 
-20 skills with reference docs. Two patterns: **task skills** (user-invocable workflows) and **knowledge skills** (auto-loaded conventions).
+13 skills with reference docs. Two patterns: **task skills** (user-invocable workflows) and **knowledge skills** (auto-loaded conventions).
 
 | Skill | Type | Purpose |
 |---|---|---|
-| `feature` | Task | Orchestrates full feature lifecycle: spec → review → plan → TDD |
-| `feature-spec` | Task | Structured interview to write a complete spec with Gherkin scenarios |
-| `feature-review` | Task | Scores specs 0-10, identifies gaps, generates missing scenarios |
-| `feature-plan` | Task | Converts spec into TDD implementation plan with PR breakdown |
 | `code-review` | Task | SOLID analysis, N+1 detection, anti-patterns (read-only) |
 | `security-audit` | Task | OWASP Top 10 audit with Brakeman (runs with opus) |
-| `tdd-cycle` | Task | Guides full Red-Green-Refactor cycle |
-| `frame-problem` | Task | Reframes vague requests into clear problems |
-| `prompt-improver` | Task | Scores and rewrites vague prompts into specific, actionable ones |
 | `rails-architecture` | Knowledge | Layered architecture decisions (runs with opus) |
 | `authentication-flow` | Knowledge | Rails 8 built-in authentication |
 | `caching-strategies` | Knowledge | Fragment, Russian doll, low-level caching |
@@ -115,52 +111,68 @@ You can also invoke skills directly:
 - **JSON Schema** for editor autocomplete
 - **Smart model routing**: opus for architecture/security, sonnet for coding, haiku for linting
 
-## Typical Workflow
+## Spec Driven Development (SDD) Kit
+
+A structured specification-to-implementation pipeline powered by 8 slash commands. SDD enforces a disciplined workflow: define what you're building before writing code, validate requirements quality, then implement from a task plan.
+Based on Github Spec-kit
+
+### SDD Commands (`.claude/commands/sdd/`)
+
+| Command | Purpose |
+|---|---|
+| `/sdd:constitution` | Create or update the project constitution — core principles and governance rules |
+| `/sdd:specify` | Generate a feature specification from a natural language description |
+| `/sdd:clarify` | Ask up to 5 targeted questions to reduce ambiguity in the spec |
+| `/sdd:checklist` | Generate a requirements quality checklist |
+| `/sdd:plan` | Create a technical implementation plan with research, data model, and contracts |
+| `/sdd:tasks` | Break the plan into dependency-ordered, executable tasks organized by user story |
+| `/sdd:analyze` | Read-only consistency analysis across spec, plan, and tasks |
+| `/sdd:implement` | Execute the task plan phase-by-phase with progress tracking |
+
+### SDD Workflow
 
 ```
-/feature-spec checkout flow        # 1. Write the spec
-/feature-review features/checkout  # 2. Review and score it
-/feature-plan features/checkout    # 3. Break into PRs
-
-# TDD cycle (agents auto-delegate)
-@rspec-agent write failing tests   # 4. RED
-@implementation-agent              # 5. GREEN (runs in worktree)
-@tdd-refactoring-agent             # 6. REFACTOR
-
-/code-review                       # 7. Quality check
-/security-audit                    # 8. Security check
+/sdd:constitution                  # 1. Define project principles (once)
+/sdd:specify user authentication   # 2. Write the feature spec
+/sdd:clarify                       # 3. Resolve ambiguities (optional)
+/sdd:checklist security            # 4. Validate requirements quality (optional)
+/sdd:plan                          # 5. Generate technical plan + data model
+/sdd:tasks                         # 6. Break into ordered tasks
+/sdd:analyze                       # 7. Cross-artifact consistency check
+/sdd:implement                     # 8. Execute tasks with verification
 ```
 
-## Project Structure
+Each command hands off to the next via suggested prompts. The pipeline creates a `specs/<branch-name>/` directory with all artifacts:
 
 ```
-.claude/
-  settings.json              # Hooks, env, Agent Teams
-  settings.local.json        # Local permissions (gitignored)
-  agents/                    # 18 specialist agents
-    model-agent.md
-    service-agent.md
-    ...
-    references/              # Agent reference docs (patterns, testing)
-      model/
-      service/
-      ...
-  skills/                    # 20 skills
-    feature-spec/SKILL.md
-    rails-architecture/SKILL.md
-    ...
-  rules/                     # 12 path-scoped rules
-    models.md
-    controllers.md
-    ...
-37signals_skills/            # 18 skills, 37signals/Basecamp style
-docs/
-    claude-code-extensibility-guide.md      # Comprehensive extensibility reference
-    mcp-servers-rails-guide.md              # MCP servers for Rails development
-    rails-development-principles.md         # Development principles guide
-    prompt-engineering-for-claude-code.md   # Prompt engineering guide
-glossary.md                  # AI terminology glossary
+specs/001-user-auth/
+├── spec.md           # Feature specification (/sdd:specify)
+├── plan.md           # Implementation plan (/sdd:plan)
+├── research.md       # Technical research & decisions (/sdd:plan)
+├── data-model.md     # Entity definitions (/sdd:plan)
+├── quickstart.md     # Integration scenarios (/sdd:plan)
+├── contracts/        # Route and API contracts (/sdd:plan)
+├── tasks.md          # Executable task list (/sdd:tasks)
+└── checklists/       # Requirements quality checklists (/sdd:checklist)
 ```
+
+### SDD Infrastructure (`.specify/`)
+
+The `.specify/` directory contains the scaffolding that powers SDD commands:
+
+- **`templates/`** — Markdown templates for specs, plans, tasks, checklists, constitutions, and agent context files
+- **`scripts/bash/`** — Shell scripts for branch creation, prerequisite checking, plan setup, and agent context updates
+- **`memory/`** — Persistent project state (constitution, decisions)
+- **`init-options.json`** — Configuration (branch numbering mode, AI agent type)
+
+SDD supports extensibility via `.specify/extensions.yml` for before/after hooks on any command, template overrides in `.specify/templates/overrides/`, and presets in `.specify/presets/`.
+
+### Key SDD Concepts
+
+- **Constitution** — Non-negotiable project principles validated at every planning gate
+- **Specs are stakeholder-facing** — No implementation details; focus on WHAT and WHY
+- **Checklists are "unit tests for English"** — They validate requirements quality, not implementation correctness
+- **Tasks organized by user story** — Each story is independently implementable and testable (MVP-first)
 
 ## Extensibility Guide
 
