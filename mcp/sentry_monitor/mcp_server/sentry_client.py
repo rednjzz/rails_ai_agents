@@ -35,6 +35,20 @@ class SentryRateLimitError(SentryAPIError):
         super().__init__(429, f"Sentry rate limit reached. Retry after {retry_after}s.")
 
 
+def _validate_issue_id(issue_id: str) -> str:
+    """Validate that issue_id is numeric to prevent path traversal."""
+    if not re.match(r"^\d+$", issue_id):
+        raise ValueError(f"Invalid issue_id (must be numeric): {issue_id}")
+    return issue_id
+
+
+def _validate_slug(slug: str) -> str:
+    """Validate that a project/org slug matches Sentry's slug format."""
+    if not re.match(r"^[a-z0-9][a-z0-9_-]*$", slug):
+        raise ValueError(f"Invalid slug: {slug}")
+    return slug
+
+
 class SentryClient:
     def __init__(self, config: SentryConfig):
         self.config = config
@@ -58,7 +72,10 @@ class SentryClient:
         if response.status_code == 401:
             raise SentryAuthError()
         if response.status_code == 429:
-            retry_after = int(response.headers.get("Retry-After", "60"))
+            try:
+                retry_after = int(response.headers.get("Retry-After", "60"))
+            except (ValueError, TypeError):
+                retry_after = 60
             raise SentryRateLimitError(retry_after)
         if response.status_code >= 400:
             raise SentryAPIError(response.status_code, response.text)
@@ -92,8 +109,9 @@ class SentryClient:
         date_range: str = "14d",
         cursor: str | None = None,
     ) -> PaginatedResponse:
-        slug = project_slug or self.config.project
-        path = f"/projects/{self.config.org}/{slug}/issues/"
+        slug = _validate_slug(project_slug or self.config.project)
+        org = _validate_slug(self.config.org)
+        path = f"/projects/{org}/{slug}/issues/"
 
         params: dict = {
             "query": query,
@@ -114,19 +132,24 @@ class SentryClient:
         return PaginatedResponse(data=data, next_cursor=next_cursor, has_more=has_more)
 
     async def get_issue_detail(self, issue_id: str) -> dict:
-        path = f"/organizations/{self.config.org}/issues/{issue_id}/"
+        _validate_issue_id(issue_id)
+        org = _validate_slug(self.config.org)
+        path = f"/organizations/{org}/issues/{issue_id}/"
         response = await self._request("GET", path)
         return response.json()
 
     async def get_latest_event(self, issue_id: str) -> dict:
-        path = f"/organizations/{self.config.org}/issues/{issue_id}/events/latest/"
+        _validate_issue_id(issue_id)
+        org = _validate_slug(self.config.org)
+        path = f"/organizations/{org}/issues/{issue_id}/events/latest/"
         response = await self._request("GET", path)
         return response.json()
 
     async def validate_auth(self) -> bool:
         """Check if the auth token is valid by hitting a lightweight endpoint."""
         try:
-            await self._request("GET", f"/organizations/{self.config.org}/")
+            org = _validate_slug(self.config.org)
+            await self._request("GET", f"/organizations/{org}/")
             return True
         except SentryAuthError:
             return False

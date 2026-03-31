@@ -96,7 +96,7 @@ async def list_issues(
             date_range=date_range,
             cursor=cursor or None,
         )
-    except SentryAPIError as e:
+    except (SentryAPIError, ValueError) as e:
         return json.dumps({"error": str(e)})
 
     issues = [_build_issue_summary(issue) for issue in result.data[:page_size]]
@@ -128,7 +128,7 @@ async def get_issue_detail(
     try:
         issue = await client.get_issue_detail(issue_id)
         event = await client.get_latest_event(issue_id)
-    except SentryAPIError as e:
+    except (SentryAPIError, ValueError) as e:
         return json.dumps({"error": str(e)})
 
     # Redact PII from event data
@@ -212,7 +212,7 @@ async def map_stacktrace(
 
     try:
         event = await client.get_latest_event(issue_id)
-    except SentryAPIError as e:
+    except (SentryAPIError, ValueError) as e:
         return json.dumps({"error": str(e)})
 
     frames = _extract_frames(event)
@@ -274,7 +274,18 @@ async def get_server_status(ctx: Context) -> str:
     )
 
 
-DEFAULT_STATE_FILE = os.path.join(".claude", "sentry-monitor-state.json")
+DEFAULT_STATE_DIR = os.path.abspath(".claude")
+DEFAULT_STATE_FILE = os.path.join(DEFAULT_STATE_DIR, "sentry-monitor-state.json")
+
+
+def _safe_state_path(state_file: str) -> str:
+    """Validate that state_file is within the .claude/ directory to prevent path traversal."""
+    resolved = os.path.abspath(state_file)
+    if not resolved.startswith(DEFAULT_STATE_DIR + os.sep) and resolved != DEFAULT_STATE_DIR:
+        raise ValueError(
+            f"state_file must be within {DEFAULT_STATE_DIR}, got: {resolved}"
+        )
+    return resolved
 
 
 @mcp.tool()
@@ -289,10 +300,13 @@ async def check_new_errors(
     Args:
         project_slug: Sentry project slug. Uses default if empty.
         environment: Filter by environment (e.g., "production").
-        state_file: Path to persistent state file. Uses default if empty.
+        state_file: Path to persistent state file. Must be within .claude/ directory. Uses default if empty.
     """
     client = _get_client()
-    sf = state_file or DEFAULT_STATE_FILE
+    try:
+        sf = _safe_state_path(state_file or DEFAULT_STATE_FILE)
+    except ValueError as e:
+        return json.dumps({"error": str(e)})
 
     # Load state
     state = MonitorState.load(sf)
@@ -310,7 +324,7 @@ async def check_new_errors(
             sort_by="date",
             environment=environment or None,
         )
-    except SentryAPIError as e:
+    except (SentryAPIError, ValueError) as e:
         return json.dumps({"error": str(e)})
 
     # Filter to new/updated issues

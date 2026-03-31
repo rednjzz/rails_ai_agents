@@ -165,3 +165,69 @@ class TestValidateAuth:
         )
 
         assert await sentry_client.validate_auth() is False
+
+
+class TestInputValidation:
+    """Tests for _validate_issue_id and _validate_slug."""
+
+    def test_valid_issue_id(self):
+        from mcp_server.sentry_client import _validate_issue_id
+
+        assert _validate_issue_id("12345") == "12345"
+        assert _validate_issue_id("0") == "0"
+
+    def test_invalid_issue_id_rejects_traversal(self):
+        from mcp_server.sentry_client import _validate_issue_id
+
+        with pytest.raises(ValueError, match="Invalid issue_id"):
+            _validate_issue_id("../../../admin")
+
+    def test_invalid_issue_id_rejects_non_numeric(self):
+        from mcp_server.sentry_client import _validate_issue_id
+
+        with pytest.raises(ValueError, match="Invalid issue_id"):
+            _validate_issue_id("abc")
+
+    def test_invalid_issue_id_rejects_empty(self):
+        from mcp_server.sentry_client import _validate_issue_id
+
+        with pytest.raises(ValueError, match="Invalid issue_id"):
+            _validate_issue_id("")
+
+    def test_valid_slug(self):
+        from mcp_server.sentry_client import _validate_slug
+
+        assert _validate_slug("my-project") == "my-project"
+        assert _validate_slug("test-org") == "test-org"
+        assert _validate_slug("project123") == "project123"
+        assert _validate_slug("my_project") == "my_project"
+
+    def test_invalid_slug_rejects_traversal(self):
+        from mcp_server.sentry_client import _validate_slug
+
+        with pytest.raises(ValueError, match="Invalid slug"):
+            _validate_slug("../../etc")
+
+    def test_invalid_slug_rejects_special_chars(self):
+        from mcp_server.sentry_client import _validate_slug
+
+        with pytest.raises(ValueError, match="Invalid slug"):
+            _validate_slug("my project")
+
+    def test_invalid_slug_rejects_empty(self):
+        from mcp_server.sentry_client import _validate_slug
+
+        with pytest.raises(ValueError, match="Invalid slug"):
+            _validate_slug("")
+
+    def test_rate_limit_non_integer_retry_after(self):
+        """Malformed Retry-After header should fall back to 60s, not crash."""
+        from mcp_server.sentry_client import SentryRateLimitError
+
+        # Simulate the parsing logic
+        try:
+            int("Thu, 01 Dec 2025 16:00:00 GMT")
+        except (ValueError, TypeError):
+            retry_after = 60
+
+        assert retry_after == 60

@@ -224,10 +224,20 @@ class TestGetServerStatusTool:
 
 
 class TestCheckNewErrorsTool:
+    @pytest.fixture(autouse=True)
+    def _patch_state_dir(self, tmp_path):
+        """Point DEFAULT_STATE_DIR to tmp_path/.claude so state_file validation passes."""
+        import mcp_server.server as srv
+
+        safe_dir = str(tmp_path / ".claude")
+        os.makedirs(safe_dir, exist_ok=True)
+        with patch.object(srv, "DEFAULT_STATE_DIR", safe_dir):
+            yield safe_dir
+
     async def test_returns_new_issues(self, mock_ctx, tmp_path):
         from mcp_server.server import check_new_errors
 
-        state_file = str(tmp_path / "state.json")
+        state_file = str(tmp_path / ".claude" / "state.json")
 
         with respx.mock(base_url="https://sentry.io/api/0") as mock:
             mock.get("/projects/test-org/test-project/issues/").mock(
@@ -245,7 +255,7 @@ class TestCheckNewErrorsTool:
     async def test_skips_already_seen(self, mock_ctx, tmp_path):
         from mcp_server.server import check_new_errors
 
-        state_file = str(tmp_path / "state.json")
+        state_file = str(tmp_path / ".claude" / "state.json")
 
         with respx.mock(base_url="https://sentry.io/api/0") as mock:
             mock.get("/projects/test-org/test-project/issues/").mock(
@@ -265,7 +275,7 @@ class TestCheckNewErrorsTool:
     async def test_updates_state_file(self, mock_ctx, tmp_path):
         from mcp_server.server import check_new_errors
 
-        state_file = str(tmp_path / "state.json")
+        state_file = str(tmp_path / ".claude" / "state.json")
 
         with respx.mock(base_url="https://sentry.io/api/0") as mock:
             mock.get("/projects/test-org/test-project/issues/").mock(
@@ -285,7 +295,7 @@ class TestCheckNewErrorsTool:
     async def test_corrupted_state_recovery(self, mock_ctx, tmp_path):
         from mcp_server.server import check_new_errors
 
-        state_file = str(tmp_path / "state.json")
+        state_file = str(tmp_path / ".claude" / "state.json")
         with open(state_file, "w") as f:
             f.write("{corrupt!!!")
 
@@ -300,3 +310,12 @@ class TestCheckNewErrorsTool:
 
         assert result["total_new"] == 2
         assert "warning" in result
+
+    async def test_rejects_path_traversal(self, mock_ctx, tmp_path):
+        from mcp_server.server import check_new_errors
+
+        state_file = str(tmp_path / "outside" / "state.json")
+        result = json.loads(await check_new_errors(mock_ctx, state_file=state_file))
+
+        assert "error" in result
+        assert "must be within" in result["error"]
