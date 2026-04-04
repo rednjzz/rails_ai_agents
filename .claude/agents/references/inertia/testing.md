@@ -267,7 +267,7 @@ class RestaurantsController < ApplicationController
     authorize restaurants
 
     render inertia: 'Restaurants/Index', props: {
-      restaurants: RestaurantSerializer.new(restaurants)
+      restaurants: restaurants.map { |r| RestaurantPresenter.new(r).to_props }
     }
   end
 

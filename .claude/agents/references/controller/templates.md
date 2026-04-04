@@ -279,8 +279,8 @@ class CommentsController < ApplicationController
     authorize @post
 
     render inertia: 'Posts/Show', props: {
-      post: PostSerializer.new(@post),
-      comments: CommentSerializer.new(@post.comments.recent)
+      post: PostPresenter.new(@post).to_props,
+      comments: @post.comments.recent.map { |c| CommentPresenter.new(c).to_props }
     }
   end
 
@@ -357,7 +357,7 @@ class ResourcesController < ApplicationController
       redirect_to result.data, notice: "Resource updated successfully."
     else
       render inertia: 'Resources/Edit', props: {
-        resource: ResourceSerializer.new(@resource),
+        resource: ResourcePresenter.new(@resource).to_props,
         errors: result.error.messages
       }, status: :unprocessable_entity
     end

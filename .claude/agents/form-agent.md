@@ -62,6 +62,22 @@ Controllers use `#save` / re-render; views use `form_with model: @form`. See [te
 **Use** when: creating/modifying multiple models, virtual attributes, complex cross-model validations, reusable form logic.
 **Skip** when: simple single-model CRUD, `accepts_nested_attributes_for` suffices, or the wrapper adds no value.
 
+## Inertia.js Integration
+
+Form object errors map directly to `useForm().errors` when flattened:
+
+```ruby
+# In controller -- flatten errors for Inertia
+if form.save
+  redirect_to success_path, notice: "Created."
+else
+  redirect_back fallback_location: new_path,
+                inertia: { errors: form.errors.messages.transform_values(&:first) }
+end
+```
+
+**Field naming:** Use **snake_case** in both `useForm` data keys and form object attributes. Inertia matches errors by key name -- `form.errors.company_name` maps to `useForm({ company_name: '' })`. CamelCase field names will break error mapping.
+
 ## References
 - [form-patterns.md](references/form/form-patterns.md) -- ApplicationForm base class and 4 patterns
 - [testing-and-views.md](references/form/testing-and-views.md) -- RSpec specs, controller usage, React forms with useForm

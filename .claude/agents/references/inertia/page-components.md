@@ -10,7 +10,7 @@ class UsersController < ApplicationController
     authorize users
 
     render inertia: 'Users/Index', props: {
-      users: UserSerializer.new(users)
+      users: users.map { |u| UserPresenter.new(u).to_props }
     }
   end
 
@@ -19,7 +19,7 @@ class UsersController < ApplicationController
     authorize user
 
     render inertia: 'Users/Show', props: {
-      user: UserSerializer.new(user)
+      user: UserPresenter.new(user).to_props
     }
   end
 
@@ -28,7 +28,7 @@ class UsersController < ApplicationController
     authorize user
 
     render inertia: 'Users/Edit', props: {
-      user: UserSerializer.new(user)
+      user: UserPresenter.new(user).to_props
     }
   end
 end
@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
 
   inertia_share do
     {
-      current_user: current_user ? UserSerializer.new(current_user) : nil,
+      current_user: current_user ? UserPresenter.new(current_user).to_props : nil,
       flash: {
         notice: flash[:notice],
         alert: flash[:alert]
@@ -138,7 +138,7 @@ def show
   authorize user
 
   render inertia: 'Users/Show', props: {
-    user: UserSerializer.new(user),
+    user: UserPresenter.new(user).to_props,
     # Lazy props are only loaded when the component requests them
     activity_log: InertiaRails.lazy { ActivityLog.for_user(user).recent.as_json }
   }
@@ -152,7 +152,7 @@ end
 def show
   render inertia: 'Dashboard/Show', props: {
     # Loaded immediately
-    user: UserSerializer.new(current_user),
+    user: UserPresenter.new(current_user).to_props,
     # Deferred: loaded in a separate request after page render
     stats: InertiaRails.defer { DashboardStatsQuery.new(current_user).call },
     notifications: InertiaRails.defer { current_user.notifications.unread.as_json }

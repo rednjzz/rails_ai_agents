@@ -213,4 +213,6 @@ end
 
 - [page-components.md](references/inertia/page-components.md) -- Controller rendering, shared data, lazy props, persistent layouts
 - [forms-and-validation.md](references/inertia/forms-and-validation.md) -- useForm hook, validation errors, file uploads
+- [error-handling.md](references/inertia/error-handling.md) -- Error serialization from services/models/forms, normalize_errors helper, flash messages
+- [authorization-props.md](references/inertia/authorization-props.md) -- Pundit permissions as Inertia props, policy_props helper, React conditional rendering
 - [testing.md](references/inertia/testing.md) -- Request specs, Inertia assertions, debugging

@@ -132,6 +132,131 @@ export default function New({ errors }: Props) {
 }
 ```
 
+## Validation Strategy Decision
+
+| Scenario | Strategy | Why |
+|----------|----------|-----|
+| Single-model CRUD | Model validation | Simplest. Errors map 1:1 to form fields. |
+| Multi-model creation | Form object | Validates across models in a transaction. |
+| Complex business rules | Service validation | Logic doesn't belong in models or forms. |
+| Inline field check | Model validation endpoint | Quick single-field validation via `valid?`. |
+
+**Best practice:** For Inertia forms, prefer **model validation for single-model CRUD** and **form objects for multi-model operations**. Service-level errors should be mapped to field names or `:base`.
+
+## Error Field Name Mapping
+
+`useForm` field names **must use snake_case** to match Rails attribute names exactly. Inertia maps errors by key name.
+
+```tsx
+// CORRECT -- snake_case matches Rails attributes
+const form = useForm({
+  first_name: '',    // matches User#first_name
+  email: '',         // matches User#email
+  agree_to_terms: false, // matches Form#agree_to_terms
+})
+
+// INCORRECT -- camelCase breaks error mapping
+const form = useForm({
+  firstName: '',     // Rails error key is :first_name, won't match!
+  agreeToTerms: false,
+})
+```
+
+## Complete Example: Form Object → Controller → useForm
+
+**Form Object:**
+
+```ruby
+# app/forms/entity_registration_form.rb
+class EntityRegistrationForm < ApplicationForm
+  attr_accessor :name, :email, :company_name
+
+  validates :name, :email, presence: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :company_name, presence: true
+
+  def persist!
+    ActiveRecord::Base.transaction do
+      company = Company.create!(name: company_name)
+      User.create!(name: name, email: email, company: company)
+    end
+  end
+end
+```
+
+**Controller:**
+
+```ruby
+# app/controllers/registrations_controller.rb
+def create
+  authorize :registration, :create?
+
+  form = EntityRegistrationForm.new(registration_params)
+
+  if form.save
+    redirect_to dashboard_path, notice: "Registration complete."
+  else
+    redirect_back fallback_location: new_registration_path,
+                  inertia: { errors: form.errors.messages.transform_values(&:first) }
+  end
+end
+```
+
+**React Page:**
+
+```tsx
+export default function New() {
+  const form = useForm({
+    name: '',
+    email: '',
+    company_name: '',
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    form.post('/registrations')
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        value={form.data.name}
+        onChange={(e) => form.setData('name', e.target.value)}
+      />
+      {form.errors.name && <p className="text-red-600 text-sm">{form.errors.name}</p>}
+
+      <input
+        value={form.data.email}
+        onChange={(e) => form.setData('email', e.target.value)}
+      />
+      {form.errors.email && <p className="text-red-600 text-sm">{form.errors.email}</p>}
+
+      <input
+        value={form.data.company_name}
+        onChange={(e) => form.setData('company_name', e.target.value)}
+      />
+      {form.errors.company_name && <p className="text-red-600 text-sm">{form.errors.company_name}</p>}
+
+      <button type="submit" disabled={form.processing}>Register</button>
+    </form>
+  )
+}
+```
+
+**Error Flow:**
+
+```
+useForm.post('/registrations')
+  → Controller#create
+    → FormObject#save → valid? → NO
+    → form.errors.messages.transform_values(&:first)
+      → { name: "can't be blank", email: "is invalid" }
+    → redirect_back inertia: { errors: { ... } }
+  → Inertia merges errors into page props
+    → form.errors.name = "can't be blank"
+    → form.errors.email = "is invalid"
+```
+
 ## Form State: processing, isDirty, reset, clearErrors
 
 ```tsx

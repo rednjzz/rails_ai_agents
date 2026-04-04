@@ -56,6 +56,54 @@ end
 
 See [patterns.md](references/presenter/patterns.md) for complete implementations including ApplicationPresenter base class, multiple presenter examples, and view usage.
 
+## Presenters for Inertia Props
+
+In this project, **Presenters are the standard way to serialize data for Inertia props**. Do NOT create separate Serializer classes -- use Presenters with a `to_props` method instead.
+
+```ruby
+class UserPresenter < ApplicationPresenter
+  def display_name
+    full_name.presence || email
+  end
+
+  def formatted_created_at
+    created_at.strftime("%B %d, %Y")
+  end
+
+  def status_badge_class
+    active? ? "badge-success" : "badge-danger"
+  end
+
+  # Serialize for Inertia props -- controls what the React component receives
+  def to_props
+    {
+      id: id,
+      name: display_name,
+      email: email,
+      status: status,
+      status_badge_class: status_badge_class,
+      created_at: formatted_created_at
+    }
+  end
+end
+```
+
+Usage in controllers:
+
+```ruby
+# Single record
+render inertia: 'Users/Show', props: {
+  user: UserPresenter.new(user).to_props
+}
+
+# Collection
+render inertia: 'Users/Index', props: {
+  users: users.map { |u| UserPresenter.new(u).to_props }
+}
+```
+
+The `to_props` method acts as a contract between backend and frontend -- it defines exactly which fields the React component receives.
+
 ## When to Use
 
 - Formatting data for display (dates, numbers, currency)
@@ -63,6 +111,7 @@ See [patterns.md](references/presenter/patterns.md) for complete implementations
 - Conditional display logic or combining attributes for display
 - Handling nil values gracefully
 - Generating view-specific links or actions
+- **Serializing model data as Inertia props (via `to_props`)**
 
 ## When NOT to Use
 

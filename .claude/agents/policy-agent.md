@@ -75,6 +75,19 @@ See [testing-and-controllers.md](references/policy/testing-and-controllers.md) f
 - [ ] Deny by default; `Scope` filters data; `permitted_attributes` defined
 - [ ] Tests cover all roles (unauthenticated, user, owner, admin) and edge cases
 
+## Inertia.js Props Integration
+
+To share permissions with the React frontend, use the `policy_props` helper in controllers:
+
+```ruby
+render inertia: 'Users/Show', props: {
+  user: UserPresenter.new(user).to_props,
+  permissions: policy_props(user, actions: %i[edit destroy])
+}
+```
+
+Frontend permissions are for **UI display only** -- Pundit always enforces authorization server-side. See [authorization-props.md](references/inertia/authorization-props.md) in the inertia references.
+
 ## References
 - [policy-patterns.md](references/policy/policy-patterns.md) -- ApplicationPolicy base + 5 policy patterns
 - [testing-and-controllers.md](references/policy/testing-and-controllers.md) -- RSpec tests, controller integration, view checks

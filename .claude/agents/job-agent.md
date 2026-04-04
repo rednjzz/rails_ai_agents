@@ -68,8 +68,18 @@ Six standard patterns are available. See [patterns.md](references/job/patterns.m
 5. **Progress Tracking** -- update an export/progress record periodically during processing
 6. **Recurring Cleanup** -- maintenance job that deletes stale records by category
 
+## Frontend Feedback
+
+When jobs need to communicate status back to the Inertia frontend, choose by processing time:
+- **< 2s**: Process synchronously, redirect with flash (simplest)
+- **2-30s**: Polling -- React hook with `router.reload({ only: [...] })`
+- **> 30s**: Action Cable -- real-time progress via WebSocket broadcast
+
+See [frontend-feedback.md](references/job/frontend-feedback.md) for complete patterns with code examples.
+
 ## References
 
 - [patterns.md](references/job/patterns.md) -- Six job implementation patterns with full code
 - [tests.md](references/job/tests.md) -- RSpec test examples for all job types
 - [usage.md](references/job/usage.md) -- Enqueueing patterns and YAML configuration
+- [frontend-feedback.md](references/job/frontend-feedback.md) -- Polling, Action Cable, and Flash patterns for job status
