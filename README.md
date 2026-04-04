@@ -1,6 +1,6 @@
 # Rails AI Agents
 
-A production-ready Claude Code setup for Ruby on Rails development: **17 specialized agents**, **23 slash commands** (including the [SDD kit](#spec-driven-development-sdd-kit)), **13 skills**, **12 path-scoped rules**, **1 MCP**, and **6 lifecycle hooks**. Drop it into your project and your AI assistant instantly knows Rails conventions, TDD workflows, and production patterns.
+A production-ready Claude Code setup for Ruby on Rails development: **17 specialized agents**, **23 slash commands** (including the [SDD kit](#spec-driven-development-sdd-kit)), **16 skills**, **12 path-scoped rules**, **1 MCP**, and **6 lifecycle hooks**. Drop it into your project and your AI assistant instantly knows Rails conventions, TDD workflows, and production patterns.
 
 Also includes:
 - [Spec Driven Development (SDD) kit](#spec-driven-development-sdd-kit) — a full specification-to-implementation pipeline + lightweight mode for bug fixes.
@@ -57,13 +57,16 @@ cp -r .claude/ /path/to/your-rails-app/.claude/
 
 ### Skills (`.claude/skills/`)
 
-13 skills with reference docs. Two patterns: **task skills** (user-invocable workflows) and **knowledge skills** (auto-loaded conventions).
+16 skills with reference docs. Two patterns: **task skills** (user-invocable workflows) and **knowledge skills** (auto-loaded conventions).
 
 | Skill | Type | Purpose |
 |---|---|---|
 | `code-review` | Task | SOLID analysis, N+1 detection, anti-patterns (read-only) |
 | `security-audit` | Task | OWASP Top 10 audit with Brakeman (runs with opus) |
+| `web-design-guidelines` | Task | Web Interface Guidelines compliance review (Vercel) |
 | `rails-architecture` | Knowledge | Layered architecture decisions (runs with opus) |
+| `react-best-practices` | Knowledge | React performance optimization — 54 rules across 7 categories (Vercel) |
+| `composition-patterns` | Knowledge | React composition patterns — compound components, state management (Vercel) |
 | `authentication-flow` | Knowledge | Rails 8 built-in authentication |
 | `caching-strategies` | Knowledge | Fragment, Russian doll, low-level caching |
 | `performance-optimization` | Knowledge | N+1 detection, query optimization |

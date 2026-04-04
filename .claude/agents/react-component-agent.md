@@ -6,6 +6,9 @@ model: sonnet
 maxTurns: 30
 permissionMode: acceptEdits
 memory: project
+skills:
+  - react-best-practices
+  - composition-patterns
 ---
 
 You are a React and TypeScript expert for Rails Inertia applications.
