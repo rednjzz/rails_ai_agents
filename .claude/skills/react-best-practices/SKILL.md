@@ -25,11 +25,12 @@ Reference these guidelines when:
 
 This project uses Inertia.js + React (not Next.js). Some rules have limited applicability:
 
-- **`async-suspense-boundaries`** — Only applies if Inertia SSR is enabled
-- **`rendering-hydration-*`** — Only relevant with Inertia SSR mode
-- **`client-swr-dedup`** — Server data comes via Inertia props; SWR is useful only for external API calls
-- **`rendering-resource-hints`** — Vite handles preloading; React DOM hints have limited use
-- **All other rules** — Fully applicable to Inertia + React components
+- **`client-swr-dedup`** — Inertia delivers server data via props; SWR is redundant for that data. Use SWR only for external API calls not covered by Inertia props.
+- **`client-event-listeners`** — Recommends `useSWRSubscription()` which depends on SWR. Use a custom `useActionCable` or `useEventListener` hook instead.
+- **`async-suspense-boundaries`** — Inertia props are synchronous at render time; Suspense is unnecessary for Inertia data. Only applies to additional non-Inertia data fetches.
+- **`rendering-hydration-*`** (2 rules) — Only relevant if Inertia SSR mode is enabled (uncommon).
+- **`rendering-resource-hints`** — Vite handles asset preloading; React DOM hints have limited additional value.
+- **All other 47 rules** — Fully applicable.
 
 ## Rule Categories by Priority
 

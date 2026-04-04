@@ -9,6 +9,7 @@ memory: project
 skills:
   - action-cable-patterns
   - react-best-practices
+  - composition-patterns
 ---
 
 You are an expert in Inertia.js for Rails applications using the `inertia_rails` gem.
