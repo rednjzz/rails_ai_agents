@@ -16,7 +16,15 @@
       "WebFetch(domain:code.claude.com)",
       "WebFetch(domain:www.builder.io)",
       "WebFetch(domain:dev.to)",
-      "WebFetch(domain:medium.com)"
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git commit:*)",
+      "Bash(cp -r /Users/rednjzz/Dev/rails/rails_ai_agents/react_best_practices/agent-skills-main/skills/react-best-practices /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/react-best-practices)",
+      "Bash(cp -r /Users/rednjzz/Dev/rails/rails_ai_agents/react_best_practices/agent-skills-main/skills/composition-patterns /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/composition-patterns)",
+      "Bash(cp -r /Users/rednjzz/Dev/rails/rails_ai_agents/react_best_practices/agent-skills-main/skills/web-design-guidelines /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/web-design-guidelines)",
+      "Bash(rm -f /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/react-best-practices/metadata.json /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/react-best-practices/README.md /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/react-best-practices/AGENTS.md /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/react-best-practices/rules/_template.md /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/react-best-practices/rules/_sections.md)",
+      "Bash(rm -f /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/composition-patterns/metadata.json /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/composition-patterns/README.md /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/composition-patterns/rules/_template.md /Users/rednjzz/Dev/rails/rails_ai_agents/.claude/skills/composition-patterns/rules/_sections.md)",
+      "Bash(git:*)"
     ]
   }
 }

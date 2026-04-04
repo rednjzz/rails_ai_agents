@@ -52,13 +52,13 @@ export default function UserProfile({ user, editable = false, onEdit }: UserProf
 ### Button
 
 ```tsx
-// app/frontend/components/ui/Button.tsx
-import { forwardRef } from 'react'
+// app/frontend/components/ui/Button.tsx (React 19 — ref as prop, no forwardRef)
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  ref?: React.Ref<HTMLButtonElement>
   variant?: ButtonVariant
   size?: ButtonSize
   loading?: boolean
@@ -76,41 +76,45 @@ const sizeClasses: Record<ButtonSize, string> = {
   lg: 'px-6 py-3 text-lg',
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', loading = false, className = '', children, disabled, ...props }, ref) => {
-    return (
-      <button
-        ref={ref}
-        disabled={disabled || loading}
-        className={`
-          ${variantClasses[variant]}
-          ${sizeClasses[size]}
-          font-semibold rounded-md
-          focus:outline-none focus:ring-2 focus:ring-offset-2
-          transition-colors duration-200
-          disabled:opacity-50 disabled:cursor-not-allowed
-          ${className}
-        `}
-        {...props}
-      >
-        {loading ? (
-          <span className="flex items-center gap-2">
-            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            {children}
-          </span>
-        ) : (
-          children
-        )}
-      </button>
-    )
-  }
-)
-
-Button.displayName = 'Button'
-export default Button
+export default function Button({
+  ref,
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  className = '',
+  children,
+  disabled,
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      ref={ref}
+      disabled={disabled || loading}
+      className={`
+        ${variantClasses[variant]}
+        ${sizeClasses[size]}
+        font-semibold rounded-md
+        focus:outline-none focus:ring-2 focus:ring-offset-2
+        transition-colors duration-200
+        disabled:opacity-50 disabled:cursor-not-allowed
+        ${className}
+      `}
+      {...props}
+    >
+      {loading ? (
+        <span className="flex items-center gap-2">
+          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          {children}
+        </span>
+      ) : (
+        children
+      )}
+    </button>
+  )
+}
 ```
 
 ### Card
@@ -222,50 +226,45 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
 ### Form Input
 
 ```tsx
-// app/frontend/components/ui/FormInput.tsx
-import { forwardRef } from 'react'
+// app/frontend/components/ui/FormInput.tsx (React 19 — ref as prop, no forwardRef)
 
 interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  ref?: React.Ref<HTMLInputElement>
   label: string
   error?: string
 }
 
-const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
-  ({ label, error, id, className = '', ...props }, ref) => {
-    const inputId = id || label.toLowerCase().replace(/\s+/g, '-')
+export default function FormInput({ ref, label, error, id, className = '', ...props }: FormInputProps) {
+  const inputId = id || label.toLowerCase().replace(/\s+/g, '-')
 
-    return (
-      <div className="space-y-1">
-        <label htmlFor={inputId} className="block text-sm font-medium text-gray-700">
-          {label}
-        </label>
-        <input
-          ref={ref}
-          id={inputId}
-          className={`
-            w-full px-3 py-2 rounded-md
-            border ${error ? 'border-red-500' : 'border-gray-300'}
-            focus:border-blue-500 focus:ring-2 focus:ring-blue-500
-            placeholder:text-gray-400
-            transition-colors duration-200
-            ${className}
-          `}
-          aria-invalid={!!error}
-          aria-describedby={error ? `${inputId}-error` : undefined}
-          {...props}
-        />
-        {error && (
-          <p id={`${inputId}-error`} className="text-red-600 text-sm" role="alert">
-            {error}
-          </p>
-        )}
-      </div>
-    )
-  }
-)
-
-FormInput.displayName = 'FormInput'
-export default FormInput
+  return (
+    <div className="space-y-1">
+      <label htmlFor={inputId} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <input
+        ref={ref}
+        id={inputId}
+        className={`
+          w-full px-3 py-2 rounded-md
+          border ${error ? 'border-red-500' : 'border-gray-300'}
+          focus:border-blue-500 focus:ring-2 focus:ring-blue-500
+          placeholder:text-gray-400
+          transition-colors duration-200
+          ${className}
+        `}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${inputId}-error` : undefined}
+        {...props}
+      />
+      {error && (
+        <p id={`${inputId}-error`} className="text-red-600 text-sm" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  )
+}
 ```
 
 ## Custom Hooks
@@ -416,7 +415,8 @@ function DataLoader<T>({ url, children }: DataLoaderProps<T>) {
 ### Compound Components
 
 ```tsx
-import { createContext, useContext, useState } from 'react'
+// React 19 — use() instead of useContext()
+import { createContext, use, useState } from 'react'
 
 interface TabsContextType {
   activeTab: string
@@ -425,13 +425,19 @@ interface TabsContextType {
 
 const TabsContext = createContext<TabsContextType | null>(null)
 
+function useTabs() {
+  const context = use(TabsContext)
+  if (!context) throw new Error('Tabs compound components must be used within <Tabs>')
+  return context
+}
+
 function Tabs({ defaultTab, children }: { defaultTab: string; children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
   return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+    <TabsContext value={{ activeTab, setActiveTab }}>
       <div>{children}</div>
-    </TabsContext.Provider>
+    </TabsContext>
   )
 }
 
@@ -444,16 +450,14 @@ function TabList({ children }: { children: React.ReactNode }) {
 }
 
 function Tab({ value, children }: { value: string; children: React.ReactNode }) {
-  const context = useContext(TabsContext)
-  if (!context) throw new Error('Tab must be used within Tabs')
-
-  const isActive = context.activeTab === value
+  const { activeTab, setActiveTab } = useTabs()
+  const isActive = activeTab === value
 
   return (
     <button
       role="tab"
       aria-selected={isActive}
-      onClick={() => context.setActiveTab(value)}
+      onClick={() => setActiveTab(value)}
       className={`px-4 py-2 font-medium ${
         isActive
           ? 'border-b-2 border-blue-600 text-blue-600'
@@ -466,10 +470,8 @@ function Tab({ value, children }: { value: string; children: React.ReactNode }) 
 }
 
 function TabPanel({ value, children }: { value: string; children: React.ReactNode }) {
-  const context = useContext(TabsContext)
-  if (!context) throw new Error('TabPanel must be used within Tabs')
-
-  if (context.activeTab !== value) return null
+  const { activeTab } = useTabs()
+  if (activeTab !== value) return null
 
   return (
     <div role="tabpanel" className="py-4">
