@@ -1,19 +1,21 @@
 ---
 paths:
+  - "app/frontend/**/*.tsx"
+  - "app/frontend/**/*.ts"
+  - "app/frontend/**/*.jsx"
   - "app/views/**/*.erb"
-  - "app/components/**/*.rb"
-  - "app/components/**/*.erb"
-  - "spec/components/**/*.rb"
   - "app/presenters/**/*.rb"
   - "spec/presenters/**/*.rb"
 ---
 
 # View & Component Conventions
 
-- Use ViewComponents (`app/components/`) for reusable UI elements over partials
-- Use presenters (`app/presenters/`) with SimpleDelegator for formatting logic
-- No business logic in views -- use presenters for display formatting
-- Turbo Frames for partial page updates; Turbo Streams for multi-target updates
-- Stimulus controllers for client-side behavior (minimal JS, progressive enhancement)
+- Use React page components in `app/frontend/pages/` for all Inertia pages
+- Use React components in `app/frontend/components/` for reusable UI elements
+- Use `useForm()` from `@inertiajs/react` for form handling
+- Use `<Link>` from `@inertiajs/react` for SPA-like navigation
+- Use presenters (`app/presenters/`) with SimpleDelegator for formatting props data
+- No business logic in components -- use presenters or services for data formatting
 - Tailwind CSS 4 utility classes for styling
 - Always include ARIA attributes for accessibility (WCAG 2.1 AA)
+- ERB views only for ActionMailer templates

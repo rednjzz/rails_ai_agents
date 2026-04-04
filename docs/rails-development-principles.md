@@ -40,7 +40,7 @@ Rails enforces this via:
 - Schema-derived migrations (database is the source of truth)
 - Convention-based naming (`User` model -> `users` table -> `UsersController` -> `/users` routes)
 - Concerns for shared model behavior
-- Partials and ViewComponents for shared UI
+- Partials and React components for shared UI
 - Service objects for shared business logic
 
 **Caveat:** DRY is about knowledge, not code. Three similar lines are better than a premature abstraction. Duplicate code is cheaper than the wrong abstraction.
@@ -139,7 +139,7 @@ Each component handles one aspect of the system. Rails MVC is the primary expres
 | Query | Complex database queries |
 | Policy | Authorization rules |
 | Presenter | Display formatting |
-| Component | Reusable UI elements |
+| Component | Reusable React UI elements |
 
 ### Single Source of Truth
 
@@ -210,25 +210,25 @@ DHH openly states: "I'm a CRUD monkey. My career is CRUD monkeying." Most web ap
 
 | Layer | Tool | Replaces |
 |-------|------|----------|
-| Frontend | Hotwire (Turbo + Stimulus) | React, Vue, Angular |
+| Frontend | Inertia.js + React | Hotwire, Vue, Angular |
 | Background Jobs | Solid Queue | Sidekiq + Redis |
 | Caching | Solid Cache | Redis |
 | WebSockets | Solid Cable | Redis |
-| Asset Pipeline | Propshaft + Import Maps | Webpack, esbuild |
+| Asset Pipeline | Vite (vite_rails) | Webpack, Propshaft + Import Maps |
 | Deployment | Kamal 2 + Thruster | Heroku, Capistrano |
 | CSS | Tailwind CSS | Bootstrap, custom CSS |
-| Components | ViewComponent | Partials |
+| Components | React Components | ViewComponent, Partials |
 
-### Hotwire-First Development
+### Inertia-First Development
 
-Build reactive UIs via server-rendered HTML rather than heavy JavaScript frameworks:
+Build modern UIs with server-driven React pages via Inertia.js:
 
-- **Turbo Drive**: SPA-like page transitions without JavaScript
-- **Turbo Frames**: Partial page updates by scoping navigation to frames
-- **Turbo Streams**: Real-time updates via WebSocket or HTTP responses
-- **Stimulus**: Modest JavaScript behaviors attached to HTML via data attributes
+- **Inertia Pages**: Full-page React components for complete interactions, with server-side routing and controllers
+- **Partial Reloads**: Targeted prop updates without full page reloads using Inertia's partial reload protocol
+- **React State**: Client-side interactivity managed with React hooks and component state
+- **Action Cable**: Real-time features via WebSocket when push updates are needed
 
-Rule: reach for Turbo Frames before Stimulus, Stimulus before custom JavaScript, and never for a JavaScript framework.
+Rule: reach for Inertia pages before standalone React SPAs, partial reloads before full page visits, React state before external state libraries.
 
 ### The Solid Trifecta
 
@@ -240,11 +240,11 @@ Rails 8 eliminates Redis as a dependency:
 
 Benefit: one fewer infrastructure dependency, simpler deployment, easier development setup.
 
-### No Build Philosophy
+### Vite-Powered Frontend
 
-- **Propshaft**: Simple asset pipeline, no compilation step
-- **Import Maps**: Pin JavaScript dependencies without bundling
-- **No Node.js required**: The entire Rails stack runs on Ruby alone
+- **Vite**: Fast dev server with HMR, optimized production builds via vite_rails gem
+- **React + TypeScript**: Type-safe frontend components with modern tooling
+- **Node.js required**: The frontend build pipeline uses Node.js for React/TypeScript compilation
 
 ### Kamal 2 Deployment
 
@@ -258,7 +258,7 @@ Benefit: one fewer infrastructure dependency, simpler deployment, easier develop
 - Native Markdown rendering
 - Active Job Continuations (pausable background tasks)
 - Local CI testing
-- Turbo Offline support
+- Turbo Offline support (Hotwire apps)
 - Action Push (push notifications)
 
 ---
@@ -293,10 +293,10 @@ For the view layer:
 [Controller]
     |
     v
-[View/Template]  ERB markup only. No logic.
+[Inertia Response]  Props passed to React pages. No markup in controllers.
     |
-    +---> [Presenter]     Format data for display.
-    +---> [Component]     Reusable UI element with tests.
+    +---> [Presenter]     Format data as props for Inertia.
+    +---> [Component]     Reusable React component with tests.
     +---> [Helper]        Simple view utilities (use sparingly).
 ```
 
@@ -306,13 +306,13 @@ For the view layer:
 app/
   controllers/     # HTTP handling, thin
   models/          # ActiveRecord, persistence, validations
-  views/           # ERB templates, no logic
+  views/           # ERB templates (mailer only)
   services/        # Business logic, orchestration
   queries/         # Complex database queries
   forms/           # Multi-model form objects
   policies/        # Pundit authorization
-  presenters/      # View formatting (SimpleDelegator)
-  components/      # ViewComponents (reusable UI)
+  presenters/      # Props formatting (SimpleDelegator)
+  frontend/        # React components and Inertia pages
   jobs/            # Background jobs (Solid Queue)
   mailers/         # Email delivery
 ```
@@ -325,7 +325,7 @@ app/
 | Query Object | Query joins multiple tables, has conditional clauses, is reused across controllers | Single-table scope, one-liner query |
 | Form Object | Form touches multiple models, has custom validation logic, wizard/multi-step forms | Single-model form, standard validations |
 | Presenter | Model has display formatting methods, conditional display logic | Simple attribute display |
-| ViewComponent | UI element is reused across views, needs unit testing, has complex markup | One-off view snippet |
+| React Component | UI element is reused across pages, needs unit testing, has complex markup | One-off view snippet |
 | Concern | Behavior is shared across multiple models, is simple and narrowly focused | Logic belongs to one model, complex behavior |
 | Policy | Authorization logic, role-based access | No access control needed |
 
@@ -460,7 +460,7 @@ ActiveUsersQuery.new(User.admin).call  # composable
 | Controller | Request | HTTP status, redirects, flash, response body |
 | Policy | Unit | Every action for every role |
 | Query | Unit | Correct results, edge cases, empty states |
-| Component | Unit | Rendered HTML, slots, variants |
+| Component | Unit | Rendered output, props, variants |
 | Mailer | Unit | Recipients, subject, body content |
 | Job | Unit | Enqueuing, idempotency, error handling |
 | System | Integration | Critical user journeys only |
@@ -851,4 +851,4 @@ end
 - [ActiveRecord Anti-Patterns: Callbacks](https://rubywizards.com/activerecord-anti-patterns-which-you-should-avoid-part-2-callbacks)
 - [Skinny Controllers, Skinny Models](https://thoughtbot.com/blog/skinny-controllers-skinny-models)
 - [The Testing Pyramid for Rails](https://semaphore.io/blog/test-pyramid-ruby-on-rails)
-- [ViewComponent Documentation](https://viewcomponent.org/)
+- [Inertia.js Documentation](https://inertiajs.com/)

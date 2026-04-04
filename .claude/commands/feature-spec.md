@@ -44,7 +44,7 @@ Ask these questions before writing anything:
 
 **UI (IF UI INVOLVED):**
 12. UI elements needed? (Pages / forms / lists / modals / components)
-13. Hotwire interactions? (Turbo Frames / Streams / Stimulus)
+13. Inertia interactions? (Inertia page / partial reload / React component / Action Cable)
 14. UI states? (Loading / success / error / empty / disabled)
 
 **Edge Cases (ALWAYS -- MINIMUM 3):**

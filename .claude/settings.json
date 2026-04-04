@@ -31,6 +31,12 @@
             "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty') && [ -n \"$FILE\" ] && [[ \"$FILE\" == *.erb ]] && bundle exec erblint --autocorrect \"$FILE\" > /dev/null 2>&1 || true",
             "timeout": 30,
             "statusMessage": "Auto-formatting ERB..."
+          },
+          {
+            "type": "command",
+            "command": "FILE=$(cat | jq -r \".tool_input.file_path // empty\") && [ -n \"$FILE\" ] && [[ \"$FILE\" == *.tsx || \"$FILE\" == *.ts || \"$FILE\" == *.jsx ]] && npx eslint --fix \"$FILE\" > /dev/null 2>&1 || true",
+            "timeout": 30,
+            "statusMessage": "Auto-formatting TypeScript/React..."
           }
         ]
       }

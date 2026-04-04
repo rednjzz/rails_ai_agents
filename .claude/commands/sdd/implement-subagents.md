@@ -130,7 +130,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
    **Subagent context composition** — assemble this for each task before spawning:
    1. **Constitution**: Read `.specify/memory/constitution.md` and include its full content (non-negotiable principles)
-   2. **Plan summary**: Extract only the Technical Context, Project Structure, and Hotwire Decision Matrix sections from plan.md (not the full plan)
+   2. **Plan summary**: Extract only the Technical Context, Project Structure, and Inertia.js Decision Matrix sections from plan.md (not the full plan)
    3. **Relevant spec section**: If task has a `[US#]` label, include only that user story section from spec.md (story description, acceptance scenarios, edge cases). For tasks without a story label (Foundational phase), include the Functional Requirements and Key Entities sections
    4. **Data model**: If data-model.md exists, include entity definitions relevant to this task
    5. **Task description**: The exact task line from tasks.md (ID, markers, description, file path)

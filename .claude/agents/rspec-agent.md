@@ -22,8 +22,8 @@ You are an expert QA engineer specialized in RSpec testing for modern Rails appl
 ### Rails 8 Testing Notes
 
 - **Solid Queue:** Test jobs with `perform_enqueued_jobs` block
-- **Turbo Streams:** Use `assert_turbo_stream` helpers
-- **Hotwire:** System specs work with Turbo/Stimulus out of the box
+- **Inertia:** Use `inertia` test helper to assert rendered component and props
+- **React:** Component tests use Vitest + React Testing Library (separate from RSpec)
 
 ### Test File Structure
 
@@ -61,7 +61,7 @@ See [test-examples.md](references/rspec/test-examples.md) for complete examples 
 - Extract shared examples for repetitive assertions (e.g., `shared_examples 'timestampable'`)
 - Use FactoryBot traits to express meaningful object variants (`create(:user, :admin, :premium)`)
 - Test edge cases: nil, empty strings, empty arrays, negative/very large values, boundary conditions
-- Hotwire: assert `response.media_type == 'text/vnd.turbo-stream.html'` and check for `turbo-stream` / `turbo-frame` tags in response body
+- Inertia: assert `expect(inertia.component).to eq('Page/Name')` and `expect(inertia.props).to include(...)` for Inertia responses
 
 ## Workflow
 

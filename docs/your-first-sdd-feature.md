@@ -143,12 +143,12 @@ You can reply with just `A`, `yes` (to accept the recommendation), or type a cus
 ### Step 3: Plan -- Design the Technical Approach (full only)
 
 ```
-/sdd:plan I am building with Ruby 3.3, Rails 8.1, PostgreSQL, Hotwire
+/sdd:plan I am building with Ruby 3.3, Rails 8.1, PostgreSQL, Inertia.js + React
 ```
 
 **What happens:**
 1. Claude reads your spec and the project constitution
-2. A `plan.md` is generated with technical context, architecture decisions, and a Hotwire decision matrix
+2. A `plan.md` is generated with technical context, architecture decisions, and an Inertia decision matrix
 3. Supporting artifacts are created:
    - `data-model.md` -- entities, fields, relationships, migration plan
    - `contracts/routes.md` -- RESTful route definitions
@@ -168,14 +168,14 @@ specs/004-bookmark-articles/
     requirements.md
 ```
 
-**Key section -- Hotwire Decision Matrix:**
+**Key section -- Inertia Decision Matrix:**
 
 ```markdown
-| Interaction              | Mechanism    | Rationale                          |
-|--------------------------|--------------|------------------------------------|
-| Bookmark/unbookmark      | Turbo Stream | Toggle button without full reload  |
-| Bookmarks list page      | Turbo Drive  | Standard navigation                |
-| Remove from list         | Turbo Stream | Remove row without page reload     |
+| Interaction              | Mechanism        | Rationale                              |
+|--------------------------|------------------|----------------------------------------|
+| Bookmark/unbookmark      | Partial Reload   | Update bookmark state without full visit |
+| Bookmarks list page      | Inertia Page     | Full page component with server props  |
+| Remove from list         | Partial Reload   | Remove item and update props in place  |
 ```
 
 **Your role:** Review the data model and routes. These drive everything downstream. Flag issues now -- it's much cheaper to fix a plan than to fix code.

@@ -13,6 +13,7 @@ paths:
 - Use strong parameters (`params.require(:x).permit(...)`)
 - Use presenters (`app/presenters/`) for view formatting, not controllers
 - Follow REST conventions: index, show, new, create, edit, update, destroy
-- Prefer `respond_to` with `format.html` and `format.turbo_stream` for Hotwire
+- Use `render inertia: 'Page', props: { ... }` for Inertia responses
+- Share layout-level data (current_user, flash) via `InertiaRails.share` in ApplicationController
 - Test with request specs in `spec/requests/`, not controller specs
 - Always test: authentication, authorization (404 for unauthorized), valid/invalid params

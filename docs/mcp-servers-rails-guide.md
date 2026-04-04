@@ -1,6 +1,6 @@
 # MCP Servers for Rails Development with Claude Code (March 2026)
 
-A practical guide to extending Claude Code with MCP servers for a modern Ruby on Rails stack (Rails 8.1, PostgreSQL, Hotwire, Kamal).
+A practical guide to extending Claude Code with MCP servers for a modern Ruby on Rails stack (Rails 8.1, PostgreSQL, Inertia.js + React, Kamal).
 
 ---
 
@@ -23,7 +23,7 @@ In Claude Code, MCP servers give Claude **direct access** to systems it can't re
 |----------|--------|-------------------|----------------|
 | 1 | **rails-mcp-server** | Rails app context (routes, models, schema, Kamal docs) | `gem install` |
 | 2 | **Postgres MCP Pro** | Database introspection, query analysis, index tuning | `docker pull` |
-| 3 | **Context7** | Live, version-specific documentation (Rails, Ruby, Hotwire) | `npx` |
+| 3 | **Context7** | Live, version-specific documentation (Rails, Ruby, React, Inertia.js) | `npx` |
 | 4 | **Playwright MCP** | Browser automation for E2E testing and debugging | `npx` |
 | 5 | **GitHub MCP** | Deep GitHub integration (issues, PRs, Actions) | Remote OAuth |
 | 6 | **Sentry MCP** | Production error monitoring and root cause analysis | Remote OAuth |
@@ -42,7 +42,7 @@ In Claude Code, MCP servers give Claude **direct access** to systems it can't re
 - Inspect model relationships and associations
 - Access database schema directly
 - Execute sandboxed Ruby code
-- Built-in Rails, Turbo, Stimulus, and **Kamal** documentation
+- Built-in Rails and **Kamal** documentation
 
 **Install:**
 ```bash
@@ -128,7 +128,7 @@ claude mcp add postgres -- postgres-mcp --access-mode=unrestricted --database-ur
 
 **What:** Fetches current, version-specific documentation from official sources at query time. Prevents hallucinated APIs and deprecated patterns.
 
-**Why it matters:** Claude's training data has a cutoff. When you're using Rails 8.1, Turbo 2.x, or the latest Stimulus features, Context7 ensures Claude references the actual current docs rather than hallucinating outdated APIs.
+**Why it matters:** Claude's training data has a cutoff. When you're using Rails 8.1, Inertia.js, or the latest React features, Context7 ensures Claude references the actual current docs rather than hallucinating outdated APIs.
 
 **Install:**
 ```bash
@@ -137,7 +137,7 @@ claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
 
 **Usage:** Add "use context7" to any prompt:
 ```
-Set up Turbo Streams for live updates. use context7
+Set up Inertia.js partial reloads for live updates. use context7
 Configure Solid Queue for background jobs. use context7
 ```
 
@@ -151,7 +151,7 @@ Configure Solid Queue for background jobs. use context7
 
 **What:** Microsoft's official browser automation MCP. Uses the browser's accessibility tree for fast, deterministic control. Multi-browser: Chrome, Firefox, WebKit.
 
-**Why it matters:** Claude can run your Rails app in a browser, navigate pages, fill forms, click buttons, and verify E2E behavior — all from your conversation. Essential for debugging Hotwire interactions, testing Turbo Frames/Streams, and validating Stimulus controllers.
+**Why it matters:** Claude can run your Rails app in a browser, navigate pages, fill forms, click buttons, and verify E2E behavior — all from your conversation. Essential for debugging Inertia page transitions, testing React component interactions, and validating client-side behavior.
 
 **Install:**
 ```bash
@@ -159,8 +159,8 @@ claude mcp add playwright -- npx @playwright/mcp@latest
 ```
 
 **Use cases for Rails:**
-- Debug Turbo Frame/Stream rendering issues visually
-- Test Stimulus controller interactions
+- Debug Inertia page rendering and prop passing issues visually
+- Test React component interactions
 - Verify responsive Tailwind layouts
 - Automate E2E test scenarios before writing Capybara specs
 

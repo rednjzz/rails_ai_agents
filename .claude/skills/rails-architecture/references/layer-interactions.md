@@ -281,17 +281,28 @@ class EventPresenter < BasePresenter
 end
 ```
 
-### 10. ViewComponent (Reusable UI)
+### 10. React Component (Reusable UI)
 
-```ruby
-# app/components/event_card_component.rb
-class EventCardComponent < ApplicationComponent
-  def initialize(event:)
-    @event = EventPresenter.new(event)
-  end
+```tsx
+// app/frontend/components/EventCard.tsx
+interface EventCardProps {
+  event: {
+    id: number
+    title: string
+    date: string
+    status: string
+  }
+}
 
-  attr_reader :event
-end
+export default function EventCard({ event }: EventCardProps) {
+  return (
+    <div className="rounded-lg border p-4">
+      <h3 className="font-semibold">{event.title}</h3>
+      <p className="text-gray-600">{event.date}</p>
+      <span className="text-sm">{event.status}</span>
+    </div>
+  )
+}
 ```
 
 ```erb

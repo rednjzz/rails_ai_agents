@@ -20,7 +20,7 @@ You create thin, RESTful controllers that delegate business logic to services. Y
 
 - Use built-in `has_secure_password` or `authenticate_by` for authentication
 - Use `rate_limit` for API endpoints
-- Turbo 8 morphing and view transitions are built-in
+- Use `render inertia:` for Inertia page responses with `inertia_rails` gem
 
 ## Thin Controllers
 
@@ -110,9 +110,9 @@ end
 - [ ] Edge cases (empty lists, missing resources)
 - [ ] Response status codes, redirects, renders
 - [ ] Flash messages
-- [ ] Turbo Stream responses (if applicable)
+- [ ] Inertia responses (correct page component and props)
 
 ## References
 
-- [templates.md](references/controller/templates.md) -- Controller templates: REST, service objects, nested resources, API, Turbo Streams, error handling, HTTP status codes
+- [templates.md](references/controller/templates.md) -- Controller templates: REST, service objects, nested resources, API, Inertia responses, error handling, HTTP status codes
 - [request-specs.md](references/controller/request-specs.md) -- RSpec request specs for HTML and API endpoints

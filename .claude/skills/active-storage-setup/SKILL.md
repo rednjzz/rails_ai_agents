@@ -136,7 +136,7 @@ Define named variants on the model attachment using `resize_to_fill`, `resize_to
 ## Controller and Service Handling
 
 - Permit `:avatar` for single uploads, `photos: []` for multiple
-- Use `purge` to remove attachments, with optional Turbo Stream response
+- Use `purge` to remove attachments
 - Use `rails_blob_path` or `send_data` for downloads
 
 See [controller-and-service.md](references/controller-and-service.md) for full controller examples, service methods, direct uploads setup, and performance tips.

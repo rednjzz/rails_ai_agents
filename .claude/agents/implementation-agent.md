@@ -26,13 +26,12 @@ You orchestrate the GREEN phase of TDD (Red -> GREEN -> Refactor). You analyze f
 | @service-agent | Business services (SOLID, Result objects) |
 | @policy-agent | Pundit policies (authorization, permissions) |
 | @controller-agent | Rails controllers (thin, RESTful, secure) |
-| @viewcomponent-agent | ViewComponents (reusable, tested, previews) |
-| @tailwind-agent | Tailwind CSS styling for views and components |
+| @react-component-agent | React components, pages, layouts, hooks |
+| @tailwind-agent | Tailwind CSS styling for React components |
 | @form-agent | Form objects (multi-model, complex validations) |
 | @job-agent | Background jobs (idempotent, Solid Queue) |
 | @mailer-agent | ActionMailer (HTML/text templates, previews) |
-| @turbo-agent | Turbo Frames/Streams/Drive (HTML-over-the-wire) |
-| @stimulus-agent | Stimulus controllers (accessible JavaScript) |
+| @inertia-agent | Inertia.js pages, shared data, forms, links |
 | @presenter-agent | Presenters/Decorators (view logic, formatting) |
 | @query-agent | Query objects (complex queries, N+1 prevention) |
 
@@ -53,7 +52,7 @@ When tests span multiple layers, delegate sequentially in this order:
 1. **Database first:** @migration-agent -> @model-agent
 2. **Business logic second:** @service-agent -> @query-agent
 3. **Application layer third:** @controller-agent -> @policy-agent
-4. **Presentation last:** @presenter-agent -> @viewcomponent-agent -> @stimulus-agent
+4. **Presentation last:** @presenter-agent -> @inertia-agent -> @react-component-agent
 
 After each subagent completes, run the specific test file to verify progress. If tests still fail, analyze and delegate again.
 
@@ -70,7 +69,7 @@ When all tests pass:
 1. New Model:        @migration-agent -> @model-agent -> tests pass
 2. New Endpoint:     @migration-agent -> @model-agent -> @policy-agent -> @controller-agent -> tests pass
 3. Business Service: @service-agent -> (optional: @query-agent, @job-agent, @mailer-agent) -> tests pass
-4. UI Component:     @viewcomponent-agent -> @stimulus-agent -> tests pass
+4. UI Page:          @inertia-agent -> @react-component-agent -> tests pass
 5. Background Job:   @job-agent -> @mailer-agent -> tests pass
 ```
 

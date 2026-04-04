@@ -15,14 +15,14 @@ You are an expert in the Presenter/Decorator pattern for Rails applications.
 You create presenters (SimpleDelegator) that encapsulate view-specific logic, always with RSpec tests.
 You keep views simple and models focused on data by moving formatting and display logic to presenters.
 
-## Presenter vs ViewComponent
+## Presenter vs React Component
 
-| Use Case | Presenter | ViewComponent |
-|----------|-----------|---------------|
-| Format single value | Yes | |
+| Use Case | Presenter | React Component |
+|----------|-----------|-----------------|
+| Format single value / props | Yes | |
 | Complex HTML output | | Yes |
 | Reusable UI element | | Yes |
-| Model decoration | Yes | |
+| Model decoration for props | Yes | |
 
 ## Presenter Example
 

@@ -1,6 +1,6 @@
 # Rails AI Agents
 
-A production-ready Claude Code setup for Ruby on Rails development: **18 specialized agents**, **23 slash commands** (including the [SDD kit](#spec-driven-development-sdd-kit)), **13 skills**, **12 path-scoped rules**, **1 MCP**, and **6 lifecycle hooks**. Drop it into your project and your AI assistant instantly knows Rails conventions, TDD workflows, and production patterns.
+A production-ready Claude Code setup for Ruby on Rails development: **17 specialized agents**, **23 slash commands** (including the [SDD kit](#spec-driven-development-sdd-kit)), **13 skills**, **12 path-scoped rules**, **1 MCP**, and **6 lifecycle hooks**. Drop it into your project and your AI assistant instantly knows Rails conventions, TDD workflows, and production patterns.
 
 Also includes:
 - [Spec Driven Development (SDD) kit](#spec-driven-development-sdd-kit) — a full specification-to-implementation pipeline + lightweight mode for bug fixes.
@@ -20,7 +20,7 @@ cp -r .claude/ /path/to/your-rails-app/.claude/
 
 ### Agents (`.claude/agents/`)
 
-18 specialist agents, each with `permissionMode: acceptEdits`, `memory: project`, `maxTurns` limits, and WHEN/WHEN NOT descriptions for auto-delegation.
+17 specialist agents, each with `permissionMode: acceptEdits`, `memory: project`, `maxTurns` limits, and WHEN/WHEN NOT descriptions for auto-delegation.
 
 | Agent | Domain | Model |
 |---|---|---|
@@ -32,11 +32,10 @@ cp -r .claude/ /path/to/your-rails-app/.claude/
 | `form-agent` | Multi-model forms, wizard forms | sonnet |
 | `query-agent` | Complex queries, N+1 prevention | sonnet |
 | `presenter-agent` | View logic separation with SimpleDelegator | sonnet |
-| `viewcomponent-agent` | Reusable, tested UI components | sonnet |
+| `inertia-agent` | Inertia.js pages, partial reloads, server-side props | sonnet |
+| `react-component-agent` | Reusable React components with TypeScript | sonnet |
 | `job-agent` | Background jobs with Solid Queue | sonnet |
 | `mailer-agent` | ActionMailer with previews and templates | sonnet |
-| `turbo-agent` | Turbo Frames, Streams, Drive | sonnet |
-| `stimulus-agent` | Stimulus controllers | sonnet |
 | `tailwind-agent` | Tailwind CSS styling | sonnet |
 | `rspec-agent` | RSpec tests | sonnet |
 | `implementation-agent` | TDD GREEN phase orchestrator (worktree isolation) | sonnet |
@@ -90,7 +89,7 @@ cp -r .claude/ /path/to/your-rails-app/.claude/
 | `jobs.md` | `app/jobs/**`, `spec/jobs/**` |
 | `mailers.md` | `app/mailers/**`, `spec/mailers/**` |
 | `migrations.md` | `db/migrate/**`, `db/schema.rb` |
-| `views.md` | `app/views/**`, `app/components/**`, `app/presenters/**` |
+| `views.md` | `app/views/**`, `app/frontend/**`, `app/presenters/**` |
 | `testing.md` | `spec/**` |
 | `principles.md` | `app/**/*.rb` |
 | `anti-patterns.md` | `app/**/*.rb`, `spec/**/*.rb` |

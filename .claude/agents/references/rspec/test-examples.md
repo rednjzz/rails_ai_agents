@@ -191,50 +191,58 @@ RSpec.describe 'API::Users', type: :request do
 end
 ```
 
-## View Component Test
+## Inertia Request Test
 
 ```ruby
-# spec/components/user_card_component_spec.rb
+# spec/requests/users_spec.rb
 require 'rails_helper'
 
-RSpec.describe UserCardComponent, type: :component do
-  let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+RSpec.describe 'Users', type: :request do
+  let(:user) { create(:user) }
 
-  describe 'rendering' do
-    subject { render_inline(described_class.new(user: user)) }
+  before { sign_in(user) }
 
-    it 'displays the user name' do
-      expect(subject.text).to include('John Doe')
+  describe 'GET /users' do
+    let!(:user_a) { create(:user, first_name: 'John', last_name: 'Doe') }
+
+    it 'renders the Users/Index component' do
+      get users_path
+
+      expect(response).to have_http_status(:ok)
+      expect(inertia.component).to eq('Users/Index')
     end
 
-    it 'includes the user avatar' do
-      expect(subject.css('img[alt="John Doe"]')).to be_present
-    end
+    it 'includes users in props' do
+      get users_path
 
-    context 'with premium user' do
-      let(:user) { create(:user, :premium) }
-
-      it 'displays the premium badge' do
-        expect(subject.css('.premium-badge')).to be_present
-      end
-    end
-
-    context 'with custom variant' do
-      subject { render_inline(described_class.new(user: user, variant: :compact)) }
-
-      it 'applies compact styling' do
-        expect(subject.css('.user-card--compact')).to be_present
-      end
+      expect(inertia.props[:users]).to be_an(Array)
+      user_props = inertia.props[:users].find { |u| u[:id] == user_a.id }
+      expect(user_props).to include(first_name: 'John', last_name: 'Doe')
     end
   end
 
-  describe 'slots' do
-    it 'renders action slot content' do
-      component = described_class.new(user: user)
-      component.with_action { 'Edit Profile' }
+  describe 'POST /users' do
+    context 'with valid params' do
+      let(:valid_params) { { user: { email: 'new@example.com', first_name: 'Jane' } } }
 
-      result = render_inline(component)
-      expect(result.text).to include('Edit Profile')
+      it 'creates and redirects' do
+        expect { post users_path, params: valid_params }
+          .to change(User, :count).by(1)
+
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    context 'with invalid params' do
+      let(:invalid_params) { { user: { email: '' } } }
+
+      it 'returns validation errors' do
+        post users_path, params: invalid_params
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(inertia.component).to eq('Users/New')
+        expect(inertia.props[:errors]).to include(:email)
+      end
     end
   end
 end
@@ -355,15 +363,11 @@ RSpec.describe 'User Authentication', type: :system do
       end
     end
 
-    context 'with Turbo Frame', :js do
-      it 'updates the frame without full page reload' do
-        within '#login-frame' do
-          fill_in 'Email', with: user.email
-          fill_in 'Password', with: 'SecurePass123!'
-          click_button 'Sign in'
-        end
+    context 'with Inertia response' do
+      it 'renders the correct component after sign in' do
+        post '/sessions', params: { email: user.email, password: 'SecurePass123!' }
 
-        expect(page).to have_css('#user-menu', text: user.email)
+        expect(response).to redirect_to(root_path)
       end
     end
   end

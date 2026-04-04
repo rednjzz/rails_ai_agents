@@ -280,7 +280,7 @@ When creating this spec from a user prompt:
 - Performance targets: Standard Rails web app expectations unless specified
 - Error handling: Rails flash messages for page-level feedback + inline form error display via model errors
 - Authentication method: Session-based authentication (Rails default)
-- Integration patterns: RESTful resources with Turbo responses (Turbo Drive for navigation, Turbo Frames for partial updates, Turbo Streams for real-time)
+- Integration patterns: RESTful resources with Inertia responses (Inertia pages for navigation, partial reloads for targeted updates, Action Cable for real-time)
 - Background processing: Solid Queue for async work
 - Caching: Solid Cache (Rails default for this project)
 

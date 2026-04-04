@@ -31,7 +31,7 @@ The 2025 Rails consensus has evolved beyond "Fat Models" to **Skinny Everything*
 | Query joins multiple tables or has conditional clauses | Extract to query object |
 | Form touches multiple models or has custom validation | Extract to form object |
 | Display formatting logic in model | Extract to presenter |
-| UI element reused across 2+ views | Extract to ViewComponent |
+| UI element reused across 2+ views | Extract to React component |
 | Shared behavior across 2+ models (narrow, simple) | Extract to concern |
 | 5+ concrete implementations with identical structure | Extract base class |
 | One-off operation | **Don't extract. Inline is fine.** |
@@ -55,7 +55,7 @@ Is it shared behavior?
 
 Is it display logic?
   ├── Formatting one model's data → Presenter (SimpleDelegator)
-  ├── Reusable UI element → ViewComponent
+  ├── Reusable UI element → React component
   └── Simple helper method → Keep in helper (use sparingly)
 
 Is it validation?

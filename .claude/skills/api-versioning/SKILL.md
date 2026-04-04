@@ -4,7 +4,7 @@ description: >-
   Implements RESTful API design with versioning and request specs. Use when
   building APIs, adding API endpoints, versioning APIs, or when user mentions
   REST, JSON API, or API design. WHEN NOT: Internal-only endpoints, HTML views,
-  Turbo Stream responses, or APIs without external consumers.
+  Inertia responses, or APIs without external consumers.
 paths: "app/controllers/api/**/*.rb, spec/requests/api/**/*.rb"
 ---
 

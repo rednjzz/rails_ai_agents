@@ -143,9 +143,9 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Document the contract format appropriate for the interface type
    - Skip if all interfaces are covered by route contracts
 
-4. **Create Hotwire decision matrix** → included in plan.md:
-   - Map each user-facing interaction to Turbo Drive / Turbo Frame / Turbo Stream / Stimulus
-   - Default to Turbo Drive unless a specific interaction needs finer granularity
+4. **Create Inertia.js page/component decision matrix** → included in plan.md:
+   - Map each user-facing interaction to Inertia page / partial reload / React state / Action Cable
+   - Default to Inertia page unless a specific interaction needs finer granularity
    - Document rationale for each choice
 
 5. **Agent context update**:

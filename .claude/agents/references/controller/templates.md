@@ -266,12 +266,23 @@ class Api::V1::RestaurantsController < Api::V1::BaseController
 end
 ```
 
-## Controller with Turbo Streams
+## Inertia Responses
 
 ```ruby
 class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_post
+
+  # GET /posts/:post_id
+  # Render an Inertia page component with props
+  def show
+    authorize @post
+
+    render inertia: 'Posts/Show', props: {
+      post: PostSerializer.new(@post),
+      comments: CommentSerializer.new(@post.comments.recent)
+    }
+  end
 
   # POST /posts/:post_id/comments
   def create
@@ -283,26 +294,13 @@ class CommentsController < ApplicationController
       params: comment_params
     )
 
-    respond_to do |format|
-      if result.success?
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.prepend(
-            "comments",
-            partial: "comments/comment",
-            locals: { comment: result.data }
-          )
-        end
-        format.html { redirect_to @post, notice: "Comment posted!" }
-      else
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "comment_form",
-            partial: "comments/form",
-            locals: { comment: Comment.new(comment_params).tap { |c| c.errors.merge!(result.error) } }
-          )
-        end
-        format.html { render :new, status: :unprocessable_entity }
-      end
+    if result.success?
+      # Redirect with flash -- Inertia handles this as a page visit
+      redirect_to post_path(@post), notice: "Comment posted!"
+    else
+      # Return errors to the current page component
+      redirect_back fallback_location: post_path(@post),
+                    inertia: { errors: result.error.messages }
     end
   end
 
@@ -314,6 +312,55 @@ class CommentsController < ApplicationController
 
   def comment_params
     params.require(:comment).permit(:body)
+  end
+end
+```
+
+### Inertia Error Handling Pattern
+
+```ruby
+class ResourcesController < ApplicationController
+  before_action :authenticate_user!
+
+  def create
+    authorize Resource
+
+    result = Resources::CreateService.call(
+      user: current_user,
+      params: resource_params
+    )
+
+    if result.success?
+      redirect_to result.data, notice: "Resource created successfully."
+    else
+      # Option A: Re-render the form component with errors
+      render inertia: 'Resources/New', props: {
+        resource: resource_params,
+        errors: result.error.messages
+      }, status: :unprocessable_entity
+
+      # Option B: Redirect back with errors (preserves form state via Inertia)
+      # redirect_back fallback_location: new_resource_path,
+      #               inertia: { errors: result.error.messages }
+    end
+  end
+
+  def update
+    authorize @resource
+
+    result = Resources::UpdateService.call(
+      resource: @resource,
+      params: resource_params
+    )
+
+    if result.success?
+      redirect_to result.data, notice: "Resource updated successfully."
+    else
+      render inertia: 'Resources/Edit', props: {
+        resource: ResourceSerializer.new(@resource),
+        errors: result.error.messages
+      }, status: :unprocessable_entity
+    end
   end
 end
 ```

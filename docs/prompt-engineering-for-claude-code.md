@@ -122,7 +122,7 @@ Every strong prompt contains some or all of these layers:
 
 | Layer | Purpose | Example |
 |-------|---------|---------|
-| **Role** | Set expertise context | "You're working on a Rails 8 app with Hotwire" |
+| **Role** | Set expertise context | "You're working on a Rails 8 app with Inertia.js + React" |
 | **Objective** | What "done" looks like | "Create a service that processes refunds" |
 | **Context** | Background, constraints, scope | "This replaces the callback in Order model" |
 | **Input** | Files, data, references | `@app/models/order.rb` `@spec/` |
@@ -266,15 +266,15 @@ Create a migration to add a status column to orders.
 - Don't modify the model yet
 ```
 
-### Hotwire prompt
+### Inertia prompt
 
 ```
-Add inline editing for the entity name field using Turbo Frames.
-- Wrap the show/edit in a turbo_frame_tag
-- Clicking the name shows an edit form
-- Submitting updates via Turbo Stream
-- No custom JavaScript -- Turbo only
-Reference: @app/views/entities/show.html.erb
+Add inline editing for the entity name field on the Show page.
+- Use React state to toggle between display and edit mode
+- Submit the update via Inertia.router.patch
+- Use partial reload to refresh only the entity props
+- Keep it in the existing page component, no separate route
+Reference: @app/frontend/pages/Entities/Show.tsx
 ```
 
 ### Service extraction prompt
@@ -393,8 +393,8 @@ Add search to the entities index page
 Good start. Now:
 - Use a query object instead of scoping in the controller
 - Support searching by name and status
-- Add a Stimulus controller for debounced input
-- Keep the Turbo Frame for partial updates
+- Add a debounced input handler in the React component
+- Use Inertia partial reloads for filtered results
 ```
 
 ### The "what, not how" rule

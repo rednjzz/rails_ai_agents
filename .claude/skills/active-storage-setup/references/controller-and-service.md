@@ -52,13 +52,10 @@ class UsersController < ApplicationController
   end
 end
 
-# For Turbo Stream
+# For Inertia
 def remove_avatar
   @user.avatar.purge
-  respond_to do |format|
-    format.turbo_stream { render turbo_stream: turbo_stream.remove("avatar-preview") }
-    format.html { redirect_to edit_user_path(@user) }
-  end
+  redirect_to edit_user_path(@user), notice: "Avatar removed"
 end
 ```
 

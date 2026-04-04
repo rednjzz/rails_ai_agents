@@ -3,27 +3,27 @@
 ## Tech Stack
 
 - **Ruby** 3.3, **Rails** 8.1, **PostgreSQL**
-- **Frontend:** Hotwire (Turbo + Stimulus), Tailwind CSS 4, ViewComponent
+- **Frontend:** Inertia.js + React, Tailwind CSS 4
 - **Testing:** RSpec, FactoryBot, Shoulda Matchers, Capybara
 - **Auth:** `has_secure_password` (Rails 8 built-in), Pundit (authorization)
 - **Background Jobs:** Solid Queue (database-backed, no Redis)
 - **Caching:** Solid Cache | **WebSockets:** Solid Cable
-- **Assets:** Propshaft + Import Maps (no Node.js)
+- **Assets:** Vite (vite_rails gem, Node.js required)
 - **Deployment:** Kamal 2 + Thruster
 
 ## Architecture
 
 ```
 app/
-  controllers/     # Thin. Delegates to services. Renders responses.
+  controllers/     # Thin. Delegates to services. Renders Inertia responses.
   models/          # Persistence: validations, associations, scopes, simple predicates.
-  views/           # ERB markup only. No logic.
+  views/           # ERB (mailer templates only). Inertia pages live in app/frontend/pages/.
   services/        # Business logic. Orchestrates models, APIs, side effects.
   queries/         # Complex database queries. Returns relations or hashes.
   forms/           # Multi-model form objects.
   policies/        # Pundit authorization. Default deny.
-  presenters/      # View formatting (SimpleDelegator).
-  components/      # ViewComponents (reusable UI with tests).
+  presenters/      # Props formatting (SimpleDelegator). Serialize data for Inertia.
+  frontend/        # React components and Inertia pages (app/frontend/).
   jobs/            # Background jobs (Solid Queue). Must be idempotent.
   mailers/         # Email delivery. Always HTML + text templates.
 ```

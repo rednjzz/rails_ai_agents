@@ -106,12 +106,12 @@ Each pattern follows the same structure:
 
 ## Broadcasting
 
-Broadcasting can be triggered from services, models, or callbacks. See [broadcasting-and-stimulus.md](references/broadcasting-and-stimulus.md) for:
+Broadcasting can be triggered from services, models, or callbacks. See [broadcasting-and-react.md](references/broadcasting-and-react.md) for:
 
 - **From a service object** — call `EventsChannel.broadcast_update(event)` after persistence
 - **From model callbacks** — use `after_create_commit` to trigger channel broadcasts
-- **Turbo Streams integration** — use `broadcast_append_to` / `broadcast_remove_to` helpers directly on models
-- **Stimulus controller** — wrap the Action Cable subscription lifecycle inside a Stimulus controller for clean connect/disconnect management
+- **React subscription** — consume Action Cable broadcasts in React components via `@rails/actioncable` client
+- **React hook** — wrap the Action Cable subscription lifecycle inside a `useActionCable` React hook for clean subscribe/unsubscribe management
 - **Performance patterns** — connection limits, selective broadcasting, debounced broadcasts
 
 ## Testing Channels
@@ -150,5 +150,5 @@ expect {
 ## References
 
 - [channel-patterns.md](references/channel-patterns.md) — Full implementations of Notifications, Resource Updates, Chat, and Dashboard channels (Ruby + JavaScript)
-- [broadcasting-and-stimulus.md](references/broadcasting-and-stimulus.md) — Broadcasting from services/models, Turbo Streams integration, Stimulus controller, performance tips
+- [broadcasting-and-react.md](references/broadcasting-and-react.md) — Broadcasting from services/models, React subscription hooks, performance tips
 - [testing.md](references/testing.md) — RSpec channel specs, authorization specs, and system tests

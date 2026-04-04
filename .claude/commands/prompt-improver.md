@@ -178,13 +178,13 @@ Feature: Add search to the entities index page
 Acceptance criteria:
 - Text search by entity name (case-insensitive, partial match)
 - Search via a form input above the table
-- Results update via Turbo Frame (no full page reload)
+- Results update via Inertia partial reload (no full page reload)
 - Empty search returns all entities
 - Preserves existing pagination
 
 Constraints:
 - Create a query object in app/queries/ for the search logic
-- Use Stimulus controller for debounced input (300ms)
+- Use React component with debounced onChange handler (300ms)
 - Follow existing index page patterns
 - Add request specs for search behavior
 

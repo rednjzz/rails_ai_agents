@@ -24,7 +24,7 @@ Where should this code go?
 +- Complex database query?        -> Query Object (@query-agent)
 +- Shared behavior across models? -> Concern (/rails-concern skill)
 +- Authorization logic?           -> Policy (@policy-agent)
-+- Reusable UI with logic?        -> ViewComponent (@viewcomponent-agent)
++- Reusable UI with logic?        -> React Component (@react-component-agent)
 +- Async/background work?         -> Job (@job-agent, /solid-queue-setup skill)
 +- Complex form (multi-model)?    -> Form Object (@form-agent)
 +- Transactional email?           -> Mailer (@mailer-agent)
@@ -58,7 +58,7 @@ Where should this code go?
 | Simple query with 1-2 conditions | Model scope | Query object |
 | Basic text formatting | Helper method | Presenter |
 | Single model form | `form_with model:` | Form object |
-| Simple partial without logic | Partial | ViewComponent |
+| Simple partial without logic | Partial | React component |
 
 ## When TO Abstract
 
@@ -120,7 +120,7 @@ end
 | Background Jobs | Solid Queue (database-backed) | /solid-queue-setup, @job-agent |
 | Real-time | Action Cable + Solid Cable | /action-cable-patterns |
 | Caching | Solid Cache (database-backed) | /caching-strategies |
-| Assets | Propshaft + Import Maps | (built-in) |
+| Assets | Vite (vite_rails) | (vite_rails gem) |
 | Deployment | Kamal 2 + Thruster | (built-in) |
 
 ## Testing Strategy by Layer
